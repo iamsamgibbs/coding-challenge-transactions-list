@@ -8,4 +8,5 @@ RUN npm install
 
 EXPOSE 3000
 
-CMD [ "bash", "scripts/docker_run.sh" ]
+# CMD [ "bash", "scripts/docker_run.sh" ]
+CMD [ "npm", "start" ]
