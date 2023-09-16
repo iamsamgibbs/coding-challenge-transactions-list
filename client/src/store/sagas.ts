@@ -1,5 +1,12 @@
 import { takeEvery } from 'redux-saga/effects';
-import { JsonRpcProvider, Transaction, TransactionResponse, TransactionReceipt, BrowserProvider, Signer } from 'ethers';
+import {
+  JsonRpcProvider,
+  Transaction,
+  TransactionResponse,
+  TransactionReceipt,
+  BrowserProvider,
+  Signer,
+} from 'ethers';
 
 import apolloClient from '../apollo/client';
 import { Actions } from '../types';
@@ -26,7 +33,7 @@ function* sendTransaction() {
 
   const transaction = {
     to: randomAddress(),
-    value: 1000000000000000000,
+    value: BigInt(1000000000000000000),
   };
 
   try {
@@ -38,25 +45,25 @@ function* sendTransaction() {
     const variables = {
       transaction: {
         gasLimit: (receipt.gasLimit && receipt.gasLimit.toString()) || '0',
-        gasPrice: (receipt.gasPrice && receipt.gasPrice.toString())|| '0',
+        gasPrice: (receipt.gasPrice && receipt.gasPrice.toString()) || '0',
         to: receipt.to,
         from: receipt.from,
         value: (receipt.value && receipt.value.toString()) || '',
         data: receipt.data || null,
         chainId: (receipt.chainId && receipt.chainId.toString()) || '123456',
         hash: receipt.hash,
-      }
+      },
     };
 
     yield apolloClient.mutate({
       mutation: SaveTransaction,
       variables,
     });
-
   } catch (error) {
     //
+    console.log('THIS IS A REDUX ERROR');
+    console.log(error);
   }
-
 }
 
 export function* rootSaga() {
