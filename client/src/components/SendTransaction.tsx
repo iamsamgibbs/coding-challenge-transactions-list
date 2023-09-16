@@ -103,7 +103,7 @@ const SendTransaction: React.FC<{ sender: string }> = ({ sender }) => {
                   <p role="alert">Recipient address must be a valid address</p>
                 )}
                 <label htmlFor="input-amount" className="block text-sm font-bold my-2">
-                  Amount:
+                  Amount (Wei):
                 </label>
                 <input
                   type="number"
