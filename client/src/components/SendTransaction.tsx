@@ -1,14 +1,36 @@
-import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
 import { Actions, NewTransactionPayload } from '../types';
+import { RootState } from '../store/reducers';
 
 interface FormData extends NewTransactionPayload {
   sender: string;
 }
 
 const SendTransaction: React.FC<{ sender: string }> = ({ sender }) => {
+  const overlayRef = useRef(null);
+
+  const isSubmitting = useSelector((state: RootState) => state.isSubmitting);
+  const prevIsSubmittingRef = useRef(false);
+
+  const isError = useSelector((state: RootState) => state.error);
+
+  function closeOverlay() {
+    if (window.HSOverlay !== undefined) {
+      window.HSOverlay.close(overlayRef.current);
+    }
+  }
+
+  useEffect(() => {
+    // If form was submitting, and now is not, close the overlay
+    if (prevIsSubmittingRef.current === true && isSubmitting === false && isError === false) {
+      closeOverlay();
+    }
+    prevIsSubmittingRef.current = isSubmitting;
+  }, [prevIsSubmittingRef, isSubmitting]);
+
   const dispatch = useDispatch();
   const {
     handleSubmit,
@@ -50,6 +72,7 @@ const SendTransaction: React.FC<{ sender: string }> = ({ sender }) => {
       </button>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div
+          ref={overlayRef}
           id="hs-basic-modal"
           className="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto bg-black bg-opacity-60">
           <div className="hs-overlay-open:opacity-100 hs-overlay-open:duration-500 opacity-100 transition-all w-full m-3 mx-auto flex flex-col h-full items-center justify-center">
@@ -114,6 +137,11 @@ const SendTransaction: React.FC<{ sender: string }> = ({ sender }) => {
                   aria-invalid={errors.amount ? 'true' : 'false'}
                 />
                 {errors.amount?.type === 'required' && <p role="alert">Amount is required</p>}
+                {isError ? (
+                  <div className="py-3">
+                    <p role="alert">Something went wrong</p>
+                  </div>
+                ) : null}
               </div>
               <div className="flex justify-end items-center gap-x-2 py-3 px-4 border-t">
                 <button

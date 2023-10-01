@@ -1,4 +1,4 @@
-import { takeEvery } from 'redux-saga/effects';
+import { put, takeEvery } from 'redux-saga/effects';
 import {
   Transaction,
   TransactionResponse,
@@ -53,11 +53,15 @@ function* sendTransaction({
       variables,
     });
 
+    yield put({
+      type: Actions.SendTransactionSuccess,
+    });
+
     navigate(`/transaction/${receipt.hash}`);
   } catch (error) {
-    //
-    console.log('THIS IS A REDUX ERROR');
-    console.log(error);
+    yield put({
+      type: Actions.SendTransactionFailure,
+    });
   }
 }
 

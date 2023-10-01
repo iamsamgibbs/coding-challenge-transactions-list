@@ -1,3 +1,9 @@
+declare global {
+  interface Window {
+    HSOverlay: any;
+  }
+}
+
 export interface Transaction {
   gasLimit: string;
   gasPrice: string;
@@ -24,6 +30,8 @@ export type Action<P> = {
 
 export enum Actions {
   SendTransaction = 'SEND_TRANSACTION',
+  SendTransactionSuccess = 'SEND_TRANSACTION_SUCCESS',
+  SendTransactionFailure = 'SEND_TRANSACTION_FAILURE',
 }
 
 export type NewTransactionPayload = {
